@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="d3tip.css">
+    <script type="text/javascript" src="lib/d3.v5.min.js"></script>
+    <script type="text/javascript" src="lib/d3-tip.min.js"></script>
+    <script type="text/javascript" src='lib/plotly.min.js'></script>
+    <script type="text/javascript" src='lib/plotly-latest.min.js'></script>
+    <script type="text/javascript" src="lib/papaparse.min.js"></script>
+    <script type="text/javascript" src="insights.js"></script>
+
+
+    <meta charset="utf-8">
+    <title>Music Recommender</title>
+</head>
+
+<body>
+
+  
+
+  <div>
+    <link href="./home.css" rel="stylesheet" />
+    <div class="home-container">
+      <header data-role="Header" class="home-header">
+        <h1 class="home-text">Music Recommender</h1>
+        <div class="home-nav">
+          <nav class="navigation-links-nav navigation-links-root-class-name15">
+            <a href="index.html" class="navigation-links-navlink">
+              <span>Recommender</span>
+            </a>
+            <a href="insights.html" class="navigation-links-navlink1">
+              <span>Insights</span>
+            </a>
+          </nav>
+        </div>
+      </header>
+        </div>
+  
+  
+    </div>
+  
+  <div class="dropdown">
+    <label for="year-dropdown"><b>Select a year:</b></label>
+    <select id="year-dropdown"></select>
+    <div id='scatterplot' class="plotly-plot"></div>
+  </div>
+  
+  <hr>
+
+    <div id="myDiv" class="plotly-plot"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <hr>
+    <div id="stackedbar" class="plotly-plot"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <hr>
+    
+    <div class="dropdown">
+      <label for="artistDropdown"><b>Select an artist:</b></label>
+      <select id="artistDropdown"></select>
+    </div> 
+    <div id="linechart" class="plotly-plot"><!-- Plotly chart will be drawn inside this DIV --></div>
+  </body>
+  </html>
