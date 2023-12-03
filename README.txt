@@ -1,3 +1,10 @@
+Frontend [Visualisations- Recommender & Insights]
+To host locally
+    -Navigate to the source folder: CSE-6242-DVA-MSD
+    -run python -m http.server 8000
+    -Then open a web browser at http://localhost:8000/
+
+
 Backend [Dataset Wrangling, Model Training and Evaluation]
 - run `cd model`.
 You can install the following libraries independently: h5py, pandas, scikit-learn, tqdm; but we STRONGLY recommend 
