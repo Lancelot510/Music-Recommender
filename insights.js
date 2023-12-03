@@ -411,8 +411,13 @@
             artists.add(values[2]);
           }
 
+          const artistArray = Array.from(artists); // Convert Set to array
+          const temp = artistArray[0];
+          artistArray[0]=artistArray[14];
+          artistArray[14]=temp;
+          
           const artistDropdown = document.getElementById('artistDropdown');
-          artists.forEach(artist => {
+          artistArray.forEach(artist => {
             const option = document.createElement('option');
             option.value = artist;
             option.text = artist;
