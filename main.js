@@ -156,35 +156,9 @@ Promise.all([
     });
 
 
-    var topDiv = d3.select("#top_songs");
-    var topSongList = nodes.sort((a, b) => b.song_hotness - a.song_hotness);
-    /*
-    var disc = topDiv
-        .selectAll(".disc")
-        .data(topSongList.slice(0, 9))
-        .enter()
-        .append("button")
-        .style("padding", "5px")
-        .style("margin", "5px")
-        .attr("id", (d) => d.song_id)
-        .attr("class", "disc")
-        .on("click", function (d) {
-            selectedSong = allNodesMap[d.song_id]
-            recommendations = [];
-            clearGraph();
-            fetchGraphData(selectedSong);
-            graphDataMap = buildGraphDataMap({});
-            drawGraph();
-        });
-
-    disc.append("text")
-        .attr("stroke", "black")
-        .attr("font-size", "11px")
-        .attr("text-anchor", "middle")
-        .text(function (d) {
-            return d['song_name'];
-        });
-        */
+    
+    
+    
     document.getElementById("similar_count_slider").addEventListener("input", function () {
         sliderValue = this.value;
         document.getElementById("slider-value").innerText = sliderValue; 
