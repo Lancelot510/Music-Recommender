@@ -22,6 +22,8 @@ Guide to setup conda environment: https://conda.io/projects/conda/en/latest/user
     - install pip in conda: https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
     - run `pip3 install -r requirements.txt`
 
+Make sure you select the venv environment when running cells inside the notebook.
+
     Dataset Wrangling [Optional]
         - model/dataset.ipynb includes the steps to download and get the desired dataset for the UI and the model training.
         - This script is optional. We have already included the files necessary to run the model.
