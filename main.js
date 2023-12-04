@@ -56,7 +56,7 @@ Promise.all([
             artist_name: node.artist_name,
             year: parseInt(node.year),
             song_hotness: isNaN(parseFloat(node.song_hotttnesss)) ? 0 : parseFloat(node.song_hotttnesss),
-            
+            release_album: node.release,
             label: 0
         };
     }),
@@ -158,7 +158,7 @@ Promise.all([
 
     var topDiv = d3.select("#top_songs");
     var topSongList = nodes.sort((a, b) => b.song_hotness - a.song_hotness);
-
+    /*
     var disc = topDiv
         .selectAll(".disc")
         .data(topSongList.slice(0, 9))
@@ -184,7 +184,7 @@ Promise.all([
         .text(function (d) {
             return d['song_name'];
         });
-
+        */
     document.getElementById("similar_count_slider").addEventListener("input", function () {
         sliderValue = this.value;
         document.getElementById("slider-value").innerText = sliderValue; 
@@ -254,9 +254,10 @@ function getTooltipStats(hoveredNode) {
     else{
         return "Song Name: " + hoveredNode['song_name'] + 
         "<br> Artist Name: " + hoveredNode['artist_name'] +
+        "<br> Release Album: " + hoveredNode['release_album'] +
         "<br> Genre: " + hoveredNode['genre'] +
         "<br> Year: " + parseInt(hoveredNode['year'])+
-        "<br> Hotness: " + parseFloat(hoveredNode['song_hotness']).toFixed(2);
+        "<br> Song Hotness: " + parseFloat(hoveredNode['song_hotness']).toFixed(2);
     }
     
 }
@@ -290,6 +291,9 @@ function tick() {
     });
 
     node.attr("transform", function (d) {
+        // Constrain x and y coordinates within the bounds
+        d.x = Math.max(radiusScale.range()[0]+10, Math.min(networkGraphWidth - radiusScale.range()[0], d.x));
+        d.y = Math.max(radiusScale.range()[0]+10, Math.min(networkGraphHeight - radiusScale.range()[0], d.y));
         return "translate(" + d.x + "," + d.y + ")";
     });
 }
@@ -324,7 +328,7 @@ function drawGraph() {
         .force('center', d3.forceCenter(networkGraphWidth / 2, networkGraphHeight / 2))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody().strength(-700))
+        .force("charge", d3.forceManyBody().strength(-400))
         .alphaTarget(0.1)
         .on("tick", tick);
 
@@ -363,7 +367,17 @@ function drawGraph() {
         .data(force.nodes())
         .enter().append("g")
         .attr("class", "node")
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))
         .on("dblclick", update)
+        .on("click",function(d){
+            d.fixed=false;
+            d.fx=null;
+            d.fy=null;
+            //svg.selectAll("circle").style("fill", function(d){return colorScale(d.weight)})
+          })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
 
@@ -483,3 +497,33 @@ function displayTopSongs(selectedUser) {
 
     topSongsList.style.textAlign = "center";
 }
+
+function dragstarted(d) {
+    if (!d3.event.active) force.alphaTarget(0.1).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+    
+};
+
+function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+    d.fixed=true;
+};
+
+function dragended(d) {
+    if (!d3.event.active) force.alphaTarget(0);
+    if (d.fixed == true) {
+      graph.selectAll("circle")
+              .filter(function(c){
+                  return c.name == d.name;
+              })
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+    else {
+        d.fx = null;
+        d.fy = null;
+    }
+};
+
