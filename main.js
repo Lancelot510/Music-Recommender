@@ -266,8 +266,8 @@ function tick() {
 
     node.attr("transform", function (d) {
         // Constrain x and y coordinates within the bounds
-        d.x = Math.max(radiusScale.range()[0]+10, Math.min(networkGraphWidth - radiusScale.range()[0], d.x));
-        d.y = Math.max(radiusScale.range()[0]+10, Math.min(networkGraphHeight - radiusScale.range()[0], d.y));
+        d.x = Math.max(5, Math.min(networkGraphWidth + 10, d.x));
+        d.y = Math.max(5, Math.min(networkGraphHeight + 10 , d.y));
         return "translate(" + d.x + "," + d.y + ")";
     });
 }
