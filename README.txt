@@ -1,9 +1,16 @@
+Demo Video: https://www.youtube.com/watch?v=ut1pPZzLBZM
+GitHub Repo: https://github.gatech.edu/tshishodia6/CSE-6242-DVA-MSD
+Hosted URL [Just for reference, please host locally]: https://github.gatech.edu/pages/tshishodia6/CSE-6242-DVA-MSD/ 
+
+#########################################################################################################
+
 Frontend [Visualisations- Recommender & Insights]
 To host locally
     -Navigate to the source folder: CSE-6242-DVA-MSD
     -run python -m http.server 8000
     -Then open a web browser at http://localhost:8000/
 
+#########################################################################################################
 
 Backend [Dataset Wrangling, Model Training and Evaluation]
 - run `cd model`.
@@ -22,5 +29,3 @@ Guide to setup conda environment: https://conda.io/projects/conda/en/latest/user
 
     Model Training and Evaluation
         - model/model.ipynb includes the steps to evaluate and train the model. It compares our method against SOTA.
-
-#########################################################################################################
