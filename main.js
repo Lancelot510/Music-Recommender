@@ -32,7 +32,6 @@ const slider = document.getElementById("similar_count_slider");
 let tip = d3.tip().attr('class', 'd3-tip').attr("id", "tooltip");
 
 const search = document.getElementById("search");
-//console.log(search);
 
 Promise.all([
     d3.dsv(",", song_similarity_csv, function (ssr) {
@@ -56,7 +55,7 @@ Promise.all([
             genre: node.genre,
             artist_name: node.artist_name,
             year: parseInt(node.year),
-            song_hotness: isNaN(parseFloat(node.song_hotttnesss)) ? 0 : parseFloat(node.song_hotttnesss), //isNaN(parseFloat(row[columnIndex])) ? 0 : parseFloat(row[columnIndex])
+            song_hotness: isNaN(parseFloat(node.song_hotttnesss)) ? 0 : parseFloat(node.song_hotttnesss),
             
             label: 0
         };
@@ -72,28 +71,27 @@ Promise.all([
         };
     })
 ]).then(allData => {
-    edges1 = allData[0]; // all edges data from csv file
-    edges2 = allData[1]; // all edges data from csv file
-    nodes = allData[2]; // all node data from the csv file
-    user_topsongs=allData[3]; //user top song data
-    //console.log(user_topsongs)
+    edges1 = allData[0];
+    edges2 = allData[1]; 
+    nodes = allData[2]; 
+    user_topsongs=allData[3]; 
+
     edges = edges1.concat(edges2);
 
     const uniqueUsers = Array.from(new Set(user_topsongs.map(item => JSON.stringify({ user_id: item.user_id, user_name: item.user_name, label: item.label })))).map(JSON.parse);
-    //console.log(uniqueUsers);
+
     const users_array = uniqueUsers.map(item => {
         const newItem = { ...item, id: item.user_id };
         delete newItem.user_id;
         return newItem;
       });
-    //console.log(users_array);
 
     allUsersMap = uniqueUsers.reduce((obj, item, idx) => {
         item['index'] = idx;
         item.children = null;
         obj[item['user_id']] = item;
         return obj;
-    }, {}); // map for quick lookup of user nodes by id
+    }, {}); 
 
 
     allNodesMap = nodes.reduce((obj, item, idx) => {
@@ -101,7 +99,7 @@ Promise.all([
         item.children = null;
         obj[item['song_id']] = item;
         return obj;
-    }, {}); // map for quick lookup of nodes by id
+    }, {}); 
 
     radiusScale.domain([5, 25]);
 
@@ -117,8 +115,7 @@ Promise.all([
     recommendationsDiv = d3.select("body")
         .append("div")
         .attr("id", "recommendations-div")
-    
-    // selectedSong = nodes[152799];
+
     selectedSong = uniqueUsers[0];
     sliderValue = 5;
 
@@ -127,11 +124,10 @@ Promise.all([
     graphDataMap = buildGraphDataMap({});
     drawGraph();
 
-    // List of songs to display
     var selectTag = d3.select("select");
 
     var options = selectTag.selectAll('#select_user')
-        .data(uniqueUsers.slice(0,100));
+        .data(uniqueUsers);
 
     options.enter()
         .append('option')
@@ -148,7 +144,7 @@ Promise.all([
     document.getElementById("search").addEventListener("click", function () {
         var e = document.getElementById("user");
         var text = e.options[e.selectedIndex].id;
-        selectedSong = allUsersMap[text]; // Fix: Use text directly as the key
+        selectedSong = allUsersMap[text];
         recommendations = [];
         displayTopSongs(text)
         clearGraph();
@@ -159,7 +155,6 @@ Promise.all([
         ;
     });
 
-    // Display initial nodes of top songs to select from
 
     var topDiv = d3.select("#top_songs");
     var topSongList = nodes.sort((a, b) => b.song_hotness - a.song_hotness);
@@ -190,18 +185,6 @@ Promise.all([
             return d['song_name'];
         });
 
-    //   Slider 
-    /*
-    slider.addEventListener("input", function () {
-        sliderValue = this.value;
-        recommendations = [];
-        clearGraph();
-        fetchGraphData(selectedSong);
-        graphDataMap = buildGraphDataMap({});
-        drawGraph();
-        // displayRecommendations();
-    });
-    */
     document.getElementById("similar_count_slider").addEventListener("input", function () {
         sliderValue = this.value;
         document.getElementById("slider-value").innerText = sliderValue; 
@@ -213,13 +196,6 @@ Promise.all([
     });
 
 
-    // Dynamic color of nodes (genre/pin?)
-
-    // Dynamic color and thickness of edges (based on collaboration?)
-
-    // Any other styling for selected node
-
-    // tooltip for nodes
     tip.html(function (d) {
         return getTooltipStats(d);
     });
@@ -231,10 +207,7 @@ Promise.all([
 });
 
 /**
- * Build a map of all current nodes in the network
- * The id of the nodes are the keys in the map
- * The node objects are the values
- * @param currentMap existing map to add the nodes to
+ * @param currentMap
  */
 function buildGraphDataMap(currentMap) {
     graphData.forEach(node => {
@@ -245,8 +218,7 @@ function buildGraphDataMap(currentMap) {
 
 
 /**
- * Function to get nodes and edges in the form required for force simulation
- * @param {*} selectedSong node that was selected
+ * @param {*} selectedSong
  */
 function fetchGraphData(selectedSong) {
     selectedSong.children = [];
@@ -272,8 +244,7 @@ function fetchGraphData(selectedSong) {
 }
 
 /**
- * Function to get the data to show in the tooltip
- * @param {*} hoveredNode node which is currently hovered
+ * @param {*} hoveredNode
  * @returns 
  */
 function getTooltipStats(hoveredNode) {
@@ -288,29 +259,22 @@ function getTooltipStats(hoveredNode) {
         "<br> Hotness: " + parseFloat(hoveredNode['song_hotness']).toFixed(2);
     }
     
-    // "<br> Average Hotness: " + parseFloat(hoveredNode['avg_hotness']).toFixed(2) +
-    // "<br> Average Familiarity: " + parseFloat(hoveredNode['avg_familiarity']).toFixed(2) +
-    // "<br> Total Tracks: " + hoveredNode['total_tracks'];
 }
 
 /**
- * To get the similar artist network from list of edges
- * @param source_id: id of the artist to find the network for
- * @param count: number of similar artists to return sorted by priority
+ * @param source_id
+ * @param count
  */
 function getSongNetwork(source_id, count = 9) {
     let filtered = edges.filter(edge => edge['source'] === source_id);
 
-    //create a deep copy of the edges because forceSimulation modifies these edges
     let neighbors = JSON.parse(JSON.stringify(filtered))
         .sort((edge1, edge2) => edge1['rank'] - edge2['rank'])
         .slice(0, count);
     return neighbors;
 }
 
-/**
- * Handle the tick event for force simulation
- */
+
 function tick() {
     path.attr("d", function (d) {
         var dx = d.target.x - d.source.x,
@@ -332,18 +296,15 @@ function tick() {
 
 
 /**
- * Clear the network by removing all children elements
- * @param graph group node under SVG
+ * @param graph
  */
 function clearGraph() {
     graph.selectAll("*").remove();
 }
 
-/**
- * Function to plot the nodes, add force simulation, path, etc
- */
+
 function drawGraph() {
-    // Set the colors for the links and circles for the top nodes
+
     var topLinkColor = "yellow";
     var topCircleColor = "orange";
 
@@ -367,11 +328,6 @@ function drawGraph() {
         .alphaTarget(0.1)
         .on("tick", tick);
 
-    /*  path = graph.append("g")
-         .selectAll("path")
-         .data(songEdges)
-         .enter()
-         .append("path") */
     var nodes = force.nodes();
     var topNodes = nodes.sort((a, b) => b.song_hotnesss - a.song_hotnesss).slice(0, 5);
 
@@ -382,30 +338,24 @@ function drawGraph() {
         .append("path")
         .attr("class", (d) => {
             if (topNodes.includes(d.source) && topNodes.includes(d.target)) {
-                return "default-link"; // add a class for top nodes
+                return "default-link";
             } else {
-                return "default-link"; // add a class for all other nodes
+                return "default-link";
             }
         })
-        // .attr("stroke-width", (d) => {
-        //     if (topNodes.includes(d.source) && topNodes.includes(d.target)) {
-        //         return 4; // set a larger stroke width for paths connecting two top nodes
-        //     } else {
-        //         return 2; // set the default stroke width for all other paths
-        //     }
-        // })
+
         .attr("fill", (d) => {
             if (topNodes.includes(d.source) && topNodes.includes(d.target)) {
-                return "none"; // set a larger stroke width for paths connecting two top nodes
+                return "none";
             } else {
-                return "none"; // set the default stroke width for all other paths
+                return "none";
             }
         })
         .attr("stroke", (d) => {
             if (topNodes.includes(d.source) && topNodes.includes(d.target)) {
-                return "#666"; // set a larger stroke width for paths connecting two top nodes
+                return "#666";
             } else {
-                return "#666"; // set the default stroke width for all other paths
+                return "#666";
             }
         });
 
@@ -417,28 +367,12 @@ function drawGraph() {
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
 
-    /*  node.append("circle")
-         .attr("id", function (d) {
-             return d.id;
-         })
-         .attr("r", function (d) {
-             return radiusScale(d['total_tracks']);
-         })
-         .attr("fill", (d) => {
-             if (d['artist_id'] == selectedArtist['artist_id']) return colors.SELECTED;
-             else if (d['children'] != null) return colors.EXPANDED;
-             return colors.DEFAULT;
-         }) */
 
     node.append("circle")
         .attr("id", function (d) {
             return d.id;
         })
-        /*
-        .attr("r", function(d) {
-          return radiusScale(d.song_hotness);
-        })
-        */
+ 
         .attr("r", 8)
         .attr("fill", (d) => {
             if (d['user_id'] == selectedSong['user_id']) {
@@ -470,47 +404,9 @@ function drawGraph() {
     force.alpha(0.1).restart()
 }
 
-/**
- * Function to display recommendations based on
- * selected and expanded nodes.
- */
-/*
-function displayRecommendations(){
-    const topRecommendations = {};
-    for (const song of recommendations) {
-        if(song != selectedSong && expandedSongs.indexOf(song) == -1){
-            songName = song["song_name"];
-            topRecommendations[songName] = topRecommendations[songName] ? topRecommendations[songName] + 1 : 1;
-        }
-    }
-    // Sort to get top 5 recommendations
-    var items = Object.keys(topRecommendations).map(function(key) {
-        return [key, topRecommendations[key]];
-    });
-    items.sort(function(first, second) {
-        return second[1] - first[1];
-    });
-    recommendationsToDisplay = items.slice(0, 5);
-    console.log(recommendationsToDisplay);
-    // TO DO: improve the display of 'recommendationsToDisplay' in UI
-    var recommendationsDiv = d3.select("#recommendations-div")
-    recommendationsDiv.selectAll("*").remove();
-    recommendationsDiv.append("h3")
-                      .text("Top-5 Artist Recommendations");
-    recommendationsDiv.append("table")
-                      .selectAll("tr")
-                      .data(recommendationsToDisplay)
-                      .enter()
-                      .append("tr")
-                      .append("td")
-                      .text(function(d){ return d[0]; });
-    console.log("out")
-}
-*/
 
 /**
- * Function to handle double click event of a node
- * @param d node that was clicked
+ * @param d
  */
 function update(d) {
     tip.hide;
@@ -538,11 +434,11 @@ function update(d) {
         d.children = null;
         clearGraph();
         drawGraph();
-        // displayRecommendations();
+
     } else {
-        // get data of similar artists
+
         expandedSongs.push(d);
-        // console.log("update_1", expandedSongs, d);
+
         if (d.user_id){
             newSongEdges = getSongNetwork(d['user_id'], sliderValue);
         }
@@ -563,26 +459,21 @@ function update(d) {
         graphDataMap = buildGraphDataMap(graphDataMap);
         clearGraph();
         drawGraph();
-        // displayRecommendations();
     }
 }
 
 
-//function to display top songs
 function displayTopSongs(selectedUser) {
-    // Filter user's top songs based on selectedUser
     var userTopSongs = user_topsongs.filter(function (song) {
         return song.user_id === selectedUser;
     });
 
-    // Sort the user's top songs by listen count (descending order)
     userTopSongs.sort(function (a, b) {
         return b.listen_count - a.listen_count;
     });
 
-    // Display top songs and their listen counts
-    var topSongsList = document.getElementById("topSongsList"); // Assuming there's an element to display the list
-    topSongsList.innerHTML = ""; // Clear previous content
+    var topSongsList = document.getElementById("topSongsList"); 
+    topSongsList.innerHTML = ""; 
 
     userTopSongs.forEach(function (song) {
         var listItem = document.createElement("li");

@@ -1,37 +1,30 @@
 
 
-  // Fetch the CSV file
+
   fetch('data/songs_details.csv')
     .then(response => response.text())
     .then(data => {
-      // Process the CSV data
+
       processData(data);
     });
 
-  // Process the CSV data
+
   function processData(csvData) {
-    // Split the CSV data into rows
+
     var rows = csvData.split('\n');
-
-    // Extract headers from the first row
     var headers = rows[0].split(',');
-
-    // Initialize arrays to store data
     var data = [];
     var genreSet = new Set();
-
-    // Iterate through rows starting from the second row (index 1)
     for (var i = 1; i < rows.length; i++) {
       var values = rows[i].split(',');
 
-      // Assuming 'tempo', 'loudness', 'title', 'genre', and 'year' are columns in your CSV
-      var tempo = parseFloat(values[11]);  // Replace with the correct index for 'tempo'
-    //   console.log(tempo)
-      var loudness = parseFloat(values[9]);  // Replace with the correct index for 'loudness'
-      var title = values[6];  // Replace with the correct index for 'title'
-      var genre = values[0];  // Replace with the correct index for 'genre'
-      var year = parseInt(values[13]);  // Replace with the correct index for 'year'
-    //   console.log(year, genre)
+
+      var tempo = parseFloat(values[11]);  
+
+      var loudness = parseFloat(values[9]);
+      var title = values[6];  
+      var genre = values[0];  
+      var year = parseInt(values[13]); 
 
       if (genre !== undefined) {
         data.push({ tempo, loudness, title, genre, year });
@@ -39,43 +32,32 @@
       }
     }
 
-    // Convert genre set to an array
+
     var uniqueGenres = Array.from(genreSet);
 
-    // Use D3 color scale for the genres
-    var colorScale = d3.scaleOrdinal(d3.schemeCategory20c); // You can choose a different D3 color scheme
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory20c);
 
-    // Create a dropdown select option for years
     var yearDropdown = document.getElementById('year-dropdown');
     var uniqueYears = [...new Set(data.map(row => row.year))];
-    uniqueYears.sort((a, b) => b - a);  // Sort in descending order
-    // console.log(uniqueYears)
+    uniqueYears.sort((a, b) => b - a); 
+
     uniqueYears.forEach(year => {
-        // console.log(year)
       var option = document.createElement('option');
       option.value = year;
       option.text = year;
       yearDropdown.add(option);
     });
 
-    // Handle the change event of the year dropdown
     yearDropdown.addEventListener('change', function () {
       var selectedYear = this.value;
       updateChart(selectedYear);
     });
 
-    // Initial chart with the first year
     updateChart(uniqueYears[0]);
 
-    // Function to update the chart based on the selected year
     function updateChart(selectedYear) {
-      // Filter data for the selected year
       var filteredData = data.filter(row => row.year == selectedYear);
-
-      // Create an array to store traces for each genre
       var traces = [];
-
-      // Iterate over unique genres and create a trace for each
       
       uniqueGenres.forEach(genre => {
         var genreData = filteredData.filter(row => row.genre === genre);
@@ -88,9 +70,9 @@
           text: genreData.map(row => row.title),
           marker: {
             size: 5,
-            color: colorScale(genre), // Assign color based on genre using the D3 color scale
+            color: colorScale(genre),
           },
-          name: genre, // This sets the legend label
+          name: genre,
         };
 
         traces.push(trace);
@@ -101,19 +83,18 @@
         title: 'Tempo vs Loudness Scatter Plot',
         xaxis: { title: 'Tempo (beats per minute)' },
         yaxis: { title: 'Loudness (dB)' },
-        showlegend: true, // Display the legend
+        showlegend: true,
         legend: {
-            x: 1,  // Adjust the x position of the legend
-            y: 1,  // Adjust the y position of the legend
+            x: 1,  
+            y: 1,  
             font: {
               family: 'Arial, sans-serif',
-              size: 16,  // Adjust the size of the legend text
+              size: 16,
               color: 'grey',
             }
           },
       };
 
-      // Update the plot with the new traces
       Plotly.newPlot('scatterplot', traces, layout);
     }
   }
@@ -287,33 +268,26 @@
         // Iterate through rows starting from the second row (index 1)
         for (var i = 1; i < rows.length; i++) {
           var values = rows[i].split(',');
-          //console.log(values);
-          // Assuming 'tempo', 'loudness', 'title', 'genre', and 'year' are columns in your CSV
-          var genre = values[0];  // Replace with the correct index for 'genre'
-          var year = parseInt(values[13]);  // Replace with the correct index for 'year'
-          //console.log(year, genre);
+ 
+          var genre = values[0];  
+          var year = parseInt(values[13]); 
 
           if (genre !== undefined) {
             data.push({genre, year });
             genreSet.add(genre);
           }
         }
-        //console.log(genreSet)
         
 
-        // Convert genre set to an array
         var uniqueGenres = Array.from(genreSet);
         console.log(uniqueGenres);
-        // Use D3 color scale for the genres
         
         var colorScale = d3.scaleOrdinal()
-          .domain(uniqueGenres) // Set the domain to unique genres
-          .range(d3.schemeCategory10); // Use a color scheme for the range (adjust as needed)
-        // Create an array to store traces for each year and genre
+          .domain(uniqueGenres) 
+          .range(d3.schemeCategory10); 
         var traces = [];
 
-        // Iterate over unique years
-        var uniqueYears = Array.from(new Set(data.map(row => row.year))); // Extract unique years from the data
+        var uniqueYears = Array.from(new Set(data.map(row => row.year))); 
         
         uniqueYears.forEach(year => {
           var filteredData = data.filter(row => row.year === year);
@@ -324,7 +298,6 @@
             return songsB - songsA;
           });
 
-          // Create traces for each genre in the current year
           var yearTraces = sortedGenres.map(genre => {
             var genreData = filteredData.filter(row => row.genre === genre);
             genreData.sort((a, b) => b.numberOfSongs - a.numberOfSongs);
@@ -348,8 +321,8 @@
           title: 'Genre distribution through the years',
           xaxis: {
             title: 'Year',
-            tickvals: uniqueYears, // Set the x-axis ticks to unique years
-            tickmode: 'array', // Specify the tick mode as an array
+            tickvals: uniqueYears, 
+            tickmode: 'array',
           },
           yaxis: { title: 'Number of songs' },
           showlegend: true,
@@ -364,7 +337,6 @@
           },
         };
 
-    // Update the plot with the new traces and layout
     Plotly.newPlot('stackedbar', traces, layout);
     }
 
@@ -389,7 +361,6 @@
         }
       }
 
-      // Calculate average hotness for each year
       const averageHotnessByYear = Object.keys(hotnessByYear).map(year => {
         const hotnessValues = hotnessByYear[year];
         const averageHotness = hotnessValues.reduce((sum, val) => sum + val, 0) / hotnessValues.length;
@@ -399,7 +370,6 @@
       return averageHotnessByYear;
     }
 
-      // Fetch the CSV file
       fetch('data/songs_details.csv')
 
         .then(response => response.text())
@@ -411,7 +381,7 @@
             artists.add(values[2]);
           }
 
-          const artistArray = Array.from(artists); // Convert Set to array
+          const artistArray = Array.from(artists);
           const temp = artistArray[0];
           artistArray[0]=artistArray[14];
           artistArray[14]=temp;
