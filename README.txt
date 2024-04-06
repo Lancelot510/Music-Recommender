@@ -1,6 +1,6 @@
 Demo Video: https://www.youtube.com/watch?v=ut1pPZzLBZM
-GitHub Repo: https://github.gatech.edu/tshishodia6/CSE-6242-DVA-MSD
-Hosted URL [Just for reference, please host locally]: https://github.gatech.edu/pages/tshishodia6/CSE-6242-DVA-MSD/ 
+GitHub Repo: https:https://github.gatech.edu/abhalerao9/Music-Recommender
+Hosted URL [Just for reference, please host locally]: https://github.gatech.edu/pages/abhalerao9/Music-Recommender/ 
 
 #########################################################################################################
 
